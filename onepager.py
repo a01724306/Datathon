@@ -101,7 +101,7 @@ st.header("Distribución de Éxito por Nivel Socioeconómico")
 levels = df['NIVELSOCIOECONOMICO_DES'].unique()
 
 selected_level = st.selectbox("Selecciona el nivel socioeconómico para visualizar:", sorted(levels))
-subset = df[df['NIVELSOCIOECONOMICO_DES'] == level]
+subset = df[df['NIVELSOCIOECONOMICO_DES'] == levels]
 counts = subset['labelExito'].value_counts()
 
 total = counts.sum()
