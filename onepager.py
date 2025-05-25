@@ -14,6 +14,11 @@ import folium
 from folium import CircleMarker
 from streamlit_folium import st_folium
 from branca.colormap import LinearColormap
+import joblib
+import numpy as np
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 st.title("OXXO: Descubriendo las Tiendas del Futuro ")
 
@@ -205,4 +210,88 @@ legend_html = '''
 mexico_map.get_root().html.add_child(folium.Element(legend_html))
 
 st_folium(mapa_exito, width=700)
+
+
+#-----
+st.header("🧠 Predicción de Éxito en Tiendas")
+
+# 📦 Cargar modelo
+@st.cache_resource
+def load_model():
+    return joblib.load('modelo/decision_tree_pipeline.joblib')
+
+model = load_model()
+
+# 📁 Cargar test set
+@st.cache_data
+def load_test_data():
+    df = pd.read_csv('test_set.csv')
+    y = df['labelExito']
+    X = df.drop(columns='labelExito')
+    return X, y
+
+X_test, y_test = load_test_data()
+
+# 📊 Evaluación
+st.header("📊 Evaluación del Modelo")
+
+umbral = st.slider("Ajustar umbral de decisión", 0.0, 1.0, 0.3, 0.01)
+probs = model.predict_proba(X_test)[:, 1]
+y_pred = (probs > umbral).astype(int)
+
+report = classification_report(y_test, y_pred, output_dict=True)
+df_report = pd.DataFrame(report).transpose()
+
+st.subheader("Reporte de Clasificación")
+st.dataframe(df_report.style.format("{:.2f}"))
+
+# 🎯 Matriz de confusión
+st.subheader("Matriz de Confusión")
+cm = confusion_matrix(y_test, y_pred)
+tn, fp, fn, tp = cm.ravel()
+st.write(f"*Falsos Positivos (FP): {fp}  |  **Falsos Negativos (FN)*: {fn}")
+fig, ax = plt.subplots()
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=['No éxito','Éxito'],
+            yticklabels=['No éxito','Éxito'],
+            ax=ax)
+ax.set_xlabel("Predicción")
+ax.set_ylabel("Real")
+st.pyplot(fig)
+
+# 🧪 Predicción manual
+st.header("🧪 Predicción con Nuevos Datos")
+
+with st.form("form_pred"):
+    col1, col2 = st.columns(2)
+
+    with col1:
+        entorno = st.selectbox("ENTORNO_DES", ['URBANO', 'RURAL'])
+        nivel_socio = st.selectbox("NIVELSOCIOECONOMICO_DES", ['1', '2', '3', '4'])
+        ubicacion = st.selectbox("LID_UBICACION_TIENDA", ['A', 'B', 'C', 'D'])
+        segmento = st.selectbox("SEGMENTO_MAESTRO_DESC", ['SUPERMERCADO', 'MINIMARKET', 'OTRO'])
+
+    with col2:
+        mts2ventas = st.number_input("MTS2VENTAS_NUM", min_value=0)
+        puertas = st.number_input("PUERTASREFRIG_NUM", min_value=0)
+        competencia = st.number_input("COMPETENCIA_500", min_value=0)
+
+    submitted = st.form_submit_button("Predecir")
+
+    if submitted:
+        input_data = pd.DataFrame([{
+            'ENTORNO_DES': entorno,
+            'NIVELSOCIOECONOMICO_DES': nivel_socio,
+            'LID_UBICACION_TIENDA': ubicacion,
+            'SEGMENTO_MAESTRO_DESC': segmento,
+            'MTS2VENTAS_NUM': mts2ventas,
+            'PUERTASREFRIG_NUM': puertas,
+            'COMPETENCIA_500': competencia,
+        }])
+
+        prob = model.predict_proba(input_data)[0,1]
+        pred = "✅ Éxito" if prob > umbral else "❌ No Éxito"
+        st.metric("Probabilidad de Éxito", f"{prob:.1%}")
+        st.subheader(f"Resultado: {pred}")
+
 
