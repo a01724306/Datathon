@@ -92,7 +92,7 @@ st.header("Tipos de Tienda por Nivel Socioeconómico y Entorno")
 st.markdown("""
 Aquí visualizamos los diferentes tipos de tiendas y cómo se distribuyen según el nivel socioeconómico y el entorno.
 
-Los segmentos más comunes son , con una mayor presencia en entornos **urbanos** y niveles **C y D**.
+Los segmentos más comunes son , con una mayor presencia en entornos con niveles socioeconómico de **C y D**.
 
 Esto indica una tendencia a adaptar el tipo de tienda a las condiciones del entorno.
 """)
