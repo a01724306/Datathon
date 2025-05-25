@@ -110,42 +110,6 @@ count_by_nse = df['NIVELSOCIOECONOMICO_DES'].value_counts().sort_index()
 print(count_by_nse)
 
 
-st.header("Distribución de Éxito por Nivel Socioeconómico")
-levels = df['NIVELSOCIOECONOMICO_DES'].unique()
-
-selected_level = st.selectbox("Selecciona el nivel socioeconómico para visualizar:", sorted(levels))
-subset = df[df['NIVELSOCIOECONOMICO_DES'] == levels]
-counts = subset['labelExito'].value_counts()
-
-total = counts.sum()
-successes = counts.get(1, 0)
-failures = counts.get(0, 0)
-fig, ax = plt.subplots()
-ax.pie(counts, labels=counts.index, autopct='%1.2f%%', startangle=90)
-ax.set_title(f'Nivel Socioeconómico: {level}\nÉxito (1): {successes} | Fracaso (0): {failures} | Total: {total}')
-ax.axis('equal')
-st.pyplot(fig)
-
-st.header("Tasa Promedio de Cumplimiento por Variable")
-st.markdown(""" """)
-group_options = {
-    "Nivel Socioeconómico": "NIVELSOCIOECONOMICO_DES",
-    "Entorno": "ENTORNO_DES",
-    "Segmento Maestro": "SEGMENTO_MAESTRO_DESC"
-}
-
-selected_group = st.selectbox("Selecciona una variable para agrupar:", list(group_options.keys()))
-
-group_column = group_options[selected_group]
-
-avg_values = df_numeric.groupby(group_column)["tasa_cumplimiento"].mean().sort_values()
-
-fig, ax = plt.subplots()
-avg_values.plot(kind='bar', color='blue', ax=ax)
-ax.set_title(f'Promedio de Tasa de Cumplimiento por {selected_group}')
-ax.set_ylabel('Tasa de Cumplimiento Promedio')
-plt.xticks(rotation=45)
-
 st.header("Mapa Binario de Éxito por Tienda")
 
 color_mapping = {1: 'green', 0: 'red'}
