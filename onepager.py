@@ -49,7 +49,7 @@ for lat, lng, nivel in zip(df['LATITUD_NUM'], df['LONGITUD_NUM'], df['NIVELSOCIO
         popup=f"Nivel: {nivel}"
     ).add_to(mexico_map)
 
-# Add custom legend as HTML
+
 legend_html = '''
 <div style="
     position: fixed;
@@ -104,15 +104,6 @@ plt.show()
 count_by_nse = df['NIVELSOCIOECONOMICO_DES'].value_counts().sort_index()
 print(count_by_nse)
 
-
-st.header("Tipos de Tienda por Nivel Socioeconómico y Entorno")
-st.markdown("""
-Aquí visualizamos los diferentes tipos de tiendas y cómo se distribuyen según el nivel socioeconómico y el entorno.
-
-Los segmentos más comunes son , con una mayor presencia en entornos.
-
-Esto indica una tendencia a adaptar el tipo de tienda a las condiciones del entorno.
-""")
 
 st.header("Distribución de Éxito por Nivel Socioeconómico")
 levels = df['NIVELSOCIOECONOMICO_DES'].unique()
