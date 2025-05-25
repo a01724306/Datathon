@@ -175,7 +175,65 @@ mexico_map.get_root().html.add_child(folium.Element(legend_html))
 
 st_folium(mapa_exito, width=700)
 
+#-----
+st.header("Relación entre Entorno y Nivel Socioeconómico")
 
+st.markdown("""
+Este mapa de calor muestra cómo se distribuyen los entornos con respecto a los niveles socioeconómicos. 
+Nos ayuda a identificar combinaciones comunes y posibles desequilibrios.
+""")
+
+contingency_table_1 = pd.crosstab(df["ENTORNO_DES"], df["NIVELSOCIOECONOMICO_DES"])
+fig1, ax1 = plt.subplots(figsize=(8, 5))
+sns.heatmap(contingency_table_1, annot=True, fmt='d', cmap="YlGnBu", ax=ax1)
+ax1.set_title("Entorno vs Nivel Socioeconómico")
+ax1.set_xlabel("Nivel Socioeconómico")
+ax1.set_ylabel("Entorno")
+st.pyplot(fig1)
+
+
+st.header("Relación entre Entorno y Segmento Maestro")
+
+st.markdown("""
+Este mapa de calor muestra cómo se relacionan los entornos con los diferentes segmentos de tienda.
+""")
+
+contingency_table_2 = pd.crosstab(df["ENTORNO_DES"], df["SEGMENTO_MAESTRO_DESC"])
+fig2, ax2 = plt.subplots(figsize=(8, 5))
+sns.heatmap(contingency_table_2, annot=True, fmt='d', cmap="YlGnBu", ax=ax2)
+ax2.set_title("Entorno vs Segmento Maestro")
+ax2.set_xlabel("Segmento")
+ax2.set_ylabel("Entorno")
+st.pyplot(fig2)
+
+
+st.header("Distribución de Metros Cuadrados por Entorno")
+
+st.markdown("""
+El siguiente boxplot nos permite visualizar la distribución de metros cuadrados de tiendas dentro de cada entorno. 
+Esto puede indicar diferencias en tamaño promedio de las tiendas dependiendo del contexto.
+""")
+
+fig3, ax3 = plt.subplots(figsize=(10, 6))
+sns.boxplot(data=df, x="ENTORNO_DES", y="MTS2VENTAS_NUM", palette="Set3", ax=ax3)
+ax3.set_title("Distribución de Metros Cuadrados por Entorno")
+ax3.set_xlabel("Entorno")
+ax3.set_ylabel("Metros Cuadrados")
+ax3.tick_params(axis='x', rotation=45)
+st.pyplot(fig3)
+
+
+st.header("Frecuencia de Tiendas por Entorno")
+
+st.markdown("""
+La gráfica siguiente muestra cuántas tiendas hay por entorno. Nos permite ver en qué tipo de entorno hay más presencia.
+""")
+
+fig4, ax4 = plt.subplots()
+sns.countplot(data=df, x="ENTORNO_DES", order=df["ENTORNO_DES"].value_counts().index, ax=ax4)
+ax4.set_title("Frecuencia de cada entorno")
+ax4.tick_params(axis='x', rotation=45)
+st.pyplot(fig4)
 #-----
 st.header("🧠 Predicción de Éxito en Tiendas")
 
