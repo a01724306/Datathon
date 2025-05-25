@@ -88,11 +88,28 @@ mexico_map.get_root().html.add_child(folium.Element(legend_html))
 
 st_data = st_folium(mexico_map, width=700, height=500)
 
+st.header("Número de Tiendas por Nivel Socioeconómico")
+st.markdown("""
+""")
+plt.figure(figsize=(8, 5))
+sns.countplot(data=df, x='NIVELSOCIOECONOMICO_DES', order=df['NIVELSOCIOECONOMICO_DES'].value_counts().index, palette="viridis")
+plt.title("Número de Tiendas por Nivel Socioeconómico")
+plt.xlabel("Nivel Socioeconómico")
+plt.ylabel("Número de Tiendas")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+count_by_nse = df['NIVELSOCIOECONOMICO_DES'].value_counts().sort_index()
+print(count_by_nse)
+
+
 st.header("Tipos de Tienda por Nivel Socioeconómico y Entorno")
 st.markdown("""
 Aquí visualizamos los diferentes tipos de tiendas y cómo se distribuyen según el nivel socioeconómico y el entorno.
 
-Los segmentos más comunes son , con una mayor presencia en entornos con niveles socioeconómico de **C y D**.
+Los segmentos más comunes son , con una mayor presencia en entornos.
 
 Esto indica una tendencia a adaptar el tipo de tienda a las condiciones del entorno.
 """)
